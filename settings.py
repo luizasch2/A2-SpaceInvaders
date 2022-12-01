@@ -15,6 +15,8 @@ def scene_config(title = "Space Invaders", image = './img/MENU.png', sound = './
     y_pix = 600
     ## title
     pygame.display.set_caption(title)
+    #icon
+    pygame.display.set_icon(pygame.image.load('./img/001-nave-espacial.png'))
     ## background image
     background = pygame.image.load(image)
     # background sound
@@ -22,7 +24,7 @@ def scene_config(title = "Space Invaders", image = './img/MENU.png', sound = './
     ## para o som tocar em loop:
     background_sound.play(-1)
     # RGB
-    screen.fill((0, 0, 0))
+    screen.fill((0, 0, 0))  
     # Plano de fundo
     screen.blit(background, (0, 0))
     return background
