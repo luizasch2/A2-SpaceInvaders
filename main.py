@@ -1,6 +1,7 @@
 import pygame
 from settings import *
 from player_config import PlayerConfig
+from bullet import Bullet
 from move import Move
 import sys
 
@@ -10,6 +11,7 @@ pygame.init()
 background = scene_config()
 player = PlayerConfig()
 move = Move()
+bullet = Bullet()
 
 while True:
     screen.blit(background, (0, 0))
@@ -33,6 +35,22 @@ while True:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+    if move.mode == 'GAME':
+        backgrond = support_images["game"]
+
+        # Moviment da nave
+        playerX_change = 0
+        player.movimento()
+        player.change_position(player.X + playerX_change)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        player.blit(player.X, player.Y)
+
+
             
     
 
