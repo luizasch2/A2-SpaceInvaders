@@ -28,13 +28,36 @@ while True:
                         move.mode = 'GAME'
                 if event.key == pygame.K_ESCAPE:
                     move.mode = 'OPT'
-                    print('OPT')
+
     if move.mode == 'OPT':
-        background = support_images["opt"]
+            background = support_images["opt"]
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        move.mode = 'MENU'
+                    if event.key == pygame.K_s:
+                        move.mode = 'RES'
+                    if event.key == pygame.K_c:
+                        move.mode = 'CSS'
+
+    if move.mode == 'RES':
+        background = support_images["res"]
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+    if move.mode == 'CSS':
+        background = support_images["css"]
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
 
     if move.mode == 'GAME':
         backgrond = support_images["game"]
@@ -48,11 +71,10 @@ while True:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-        player.blit(player.X, player.Y)
+        player.blit(player.X, player.Y) 
 
 
-            
-    
+
 
 
     pygame.display.update()
