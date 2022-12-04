@@ -16,6 +16,9 @@ player = PlayerConfig()
 move = Move()
 bullet = Bullet()
 enemies = [Enemy(random.randint(65, x_pix - 65), random.randint(75, 150)) for _ in range(num_of_enemies)]
+for enemy in enemies:
+    enemy.bullet = Bullet()
+    enemy.bullet.config_enemy_image()
 
 
 while True:
@@ -209,8 +212,9 @@ while True:
 
         # Moviment da nave
         playerX_change = 0
-        player.movimento()
-        player.change_position(player.X + playerX_change)
+        if background == support_images["game"]:
+            player.movimento()
+            player.change_position(player.X + playerX_change)
         if background != support_images["gameover"]:
             if bullet.state == 'stopped':
                 player.fire(bullet=bullet)
@@ -228,17 +232,34 @@ while True:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-        player.blit(player.X, player.Y) 
+        
+        if backgrond == support_images["game"]:
+            player.blit(player.X, player.Y) 
+        else:
+            player.blit(x_pix + 64, y_pix + 664)
 
         i = 0
         for enemy in enemies:
             i += 1
             if enemy.X <= 0 or enemy.X >= x_pix - 64:
                 enemy.change_vel(- enemy.vel)
+                enemy.change_position(enemy.X, enemy.Y + 40)
             enemy.change_position(enemy.X + enemy.vel, enemy.Y)
+        
+            # bala do inimigo
+            if i%3 == 0:
+                if enemy.bullet.Y >= y_pix:
+                    enemy.bullet.Y = enemy.Y
+                    enemy.bullet.X = enemy.X
+                if enemy.bullet.Y <= y_pix:
+                    enemy.bullet.change_position(enemy.bullet.X, enemy.bullet.Y + (x_pix*y_pix)/(800*600)/2)
+                enemy.bullet.blit(enemy.bullet.X, enemy.bullet.Y)
 
             # colisão
             collision = move.isCollision(enemy, bullet)
+
+            ep = move.coliep(enemy.X, enemy.Y, player.X, player.Y)
+            bp = move.coliep(enemy.bullet.X, enemy.bullet.Y, player.X, player.Y)
 
             if collision:
                 collision_sound = mixer.Sound('./sounds/explosion.wav')
@@ -246,6 +267,14 @@ while True:
                 bullet.change_position(new_x = bullet.X, new_y = y_pix - 120)
                 bullet.change_state('stopped')  
                 enemy.change_position(random.randint(65, x_pix - 65), random.randint(50, 150))
+
+            if ep or bp:
+                player.change_position(x_pix)
+                for ind_enemy in enemies:
+                    ind_enemy.change_position(x_pix, y_pix)
+                background = support_images["gameover"]
+                gameover_sound = pygame.mixer.Sound('./sounds/gameover.wav')
+                gameover_sound.play()
 
         for enemy in enemies:
             enemy.blit(enemy.X, enemy.Y)
