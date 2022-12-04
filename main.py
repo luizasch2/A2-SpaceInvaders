@@ -6,6 +6,7 @@ from move import Move
 import sys
 from enemy import Enemy
 import random
+from pygame import mixer
 
 #init pygame
 pygame.init()
@@ -210,6 +211,18 @@ while True:
         playerX_change = 0
         player.movimento()
         player.change_position(player.X + playerX_change)
+        if background != support_images["gameover"]:
+            if bullet.state == 'stopped':
+                player.fire(bullet=bullet)
+
+        # movimento da bala
+        if bullet.Y <= 0:
+            bullet.change_position(new_x = bullet.X, new_y = y_pix - 120)
+            bullet.change_state('stopped')
+
+        if bullet.state == 'fire':
+            bullet.fire(bullet.X, bullet.Y)
+            bullet.change_position(bullet.X, bullet.Y - 3)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -223,6 +236,16 @@ while True:
             if enemy.X <= 0 or enemy.X >= x_pix - 64:
                 enemy.change_vel(- enemy.vel)
             enemy.change_position(enemy.X + enemy.vel, enemy.Y)
+
+            # colisão
+            collision = move.isCollision(enemy, bullet)
+
+            if collision:
+                collision_sound = mixer.Sound('./sounds/explosion.wav')
+                collision_sound.play()
+                bullet.change_position(new_x = bullet.X, new_y = y_pix - 120)
+                bullet.change_state('stopped')  
+                enemy.change_position(random.randint(65, x_pix - 65), random.randint(50, 150))
 
         for enemy in enemies:
             enemy.blit(enemy.X, enemy.Y)
