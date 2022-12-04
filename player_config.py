@@ -30,6 +30,10 @@ class PlayerConfig():
     def change_position(self, new_x):
         self.X = new_x
     
+    def change_spawn(self, new_x, new_y):
+        self.X = new_x
+        self.Y = new_y
+
     def change_image(self, image_src: str):
         self.image = pygame.image.load(image_src)
     
