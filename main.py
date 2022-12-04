@@ -267,7 +267,7 @@ while True:
                 bullet.change_position(new_x = bullet.X, new_y = y_pix - 120)
                 bullet.change_state('stopped')  
                 enemy.change_position(random.randint(65, x_pix - 65), random.randint(50, 150))
-
+                
             if ep or bp:
                 player.change_position(x_pix)
                 for ind_enemy in enemies:
@@ -278,9 +278,5 @@ while True:
 
         for enemy in enemies:
             enemy.blit(enemy.X, enemy.Y)
-
-
-
-
 
     pygame.display.update()

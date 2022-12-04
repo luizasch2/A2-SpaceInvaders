@@ -2,6 +2,11 @@ import pygame
 from settings import *
 from player_config import PlayerConfig
 import math
+from explosao import Explosao
+
+all_sprite = pygame.sprite.Group()
+explosao = Explosao()
+all_sprite.add(explosao)
 
 class Move():
     def __init__(self, mode: str = 'MENU'):
@@ -10,6 +15,9 @@ class Move():
     def isCollision(self, enemy, bullet):
         distance = math.sqrt((enemy.X - bullet.X) ** 2 + (enemy.Y - bullet.Y) ** 2)
         if distance < 30:
+            explosao.posicao_sprite(enemy.X, enemy.Y)
+            explosao.explodir()
+            explosao.update()
             return True
         else:
             return False
