@@ -13,10 +13,10 @@ class PlayerConfig():
     
     def movimento(self):        
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] and self.X > 0:
-            self.X -= 0.5*(x_pix*y_pix)/(800*600)
-        if keys[pygame.K_RIGHT] and self.X < x_pix - 64:
-            self.X += 0.5*(x_pix*y_pix)/(800*600)
+        if keys[pygame.K_LEFT]:
+            self.X -= (x_pix*y_pix)/(800*600)
+        if keys[pygame.K_RIGHT]:
+            self.X += (x_pix*y_pix)/(800*600)
     
     def fire(self, bullet: Bullet):
         keys = pygame.key.get_pressed()
