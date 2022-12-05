@@ -8,11 +8,10 @@ from enemy import Enemy
 from player_config import PlayerConfig
 from bullet import Bullet
 from move import Move
+from explosao import Explosao
 
 # inicializa o pygame   
 pygame.init()
-
-support_images = support_images_small
 
 background = scene_config()
 player = PlayerConfig()
@@ -25,6 +24,10 @@ for enemy in enemies:
 move = Move()
 EZ = True
 
+all_sprites = pygame.sprite.Group()
+explosao = Explosao()
+all_sprites.add(explosao)
+
 while True:
     screen.blit(background, (0, 0))
     if move.mode == 'MENU':
@@ -36,6 +39,7 @@ while True:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
+                    EZ = True
                     player.change_spawn(x_pix/2 - 30, y_pix - 120)
                     background = support_images["game"]
                     move.mode = 'GAME'
@@ -218,6 +222,7 @@ while True:
 
         player.movimento()
         player.change_position(player.X + playerX_change)
+
         if background != support_images["gameover"]:
             if bullet.state == 'stopped':
                 player.fire(bullet=bullet)
@@ -238,13 +243,6 @@ while True:
                         enemy.bullet.config_enemy_image()
                         enemy.bullet.change_position(enemy.X, enemy.Y)
                     move.restart()
-
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT and playerX_change != (x_pix*y_pix)/(800*600):
-                    playerX_change = 0
-                if event.key == pygame.K_RIGHT and playerX_change != -1*(x_pix*y_pix)/(800*600):
-                    playerX_change = 0
-
     
         # garante q não saia da tela:
         if player.X <= 0:
@@ -258,6 +256,7 @@ while True:
             i += 1
             if enemy.X <= 0 or enemy.X >= x_pix - 64:
                 enemy.change_vel(- enemy.vel)
+                enemy.change_position(enemy.X, enemy.Y + 40)
             enemy.change_position(enemy.X + enemy.vel, enemy.Y)
             
             # colisão
@@ -279,7 +278,13 @@ while True:
                 bullet.change_position(new_x = bullet.X, new_y = y_pix - 120)
                 bullet.change_state('stopped')
                 move.add_score()
-                enemy.change_position(random.randint(65, x_pix - 65), random.randint(50, 150))
+                explosao.posicao(enemy.X, enemy.Y)
+                for object in enemies:
+                    all_sprites.update()
+                    all_sprites.draw(screen)
+                    pygame.display.flip()
+                    if object.X == enemy.X and object.Y == enemy.Y:
+                        object.change_position(random.randint(65, x_pix - 65), random.randint(50, 150))
 
 
             ep = move.coliep(enemy.X, enemy.Y, player.X, player.Y)
@@ -294,7 +299,6 @@ while True:
                 gameover_sound = pygame.mixer.Sound('./sounds/gameover.wav')
                 gameover_sound.play()
              
-            # enemy(enemyX[i], enemyY[i])
 
         # movimento da bala
         if bullet.Y <= 0:
