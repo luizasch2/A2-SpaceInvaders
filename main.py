@@ -7,10 +7,12 @@ import sys
 from enemy import Enemy
 import random
 from pygame import mixer
+from explosao import Explosao
 
 #init pygame
 pygame.init()
 
+EZ = True
 background = scene_config()
 player = PlayerConfig()
 move = Move()
@@ -20,6 +22,9 @@ for enemy in enemies:
     enemy.bullet = Bullet()
     enemy.bullet.config_enemy_image()
 
+all_sprite = pygame.sprite.Group()
+explosao = Explosao()
+all_sprite.add(explosao)
 
 while True:
     screen.blit(background, (0, 0))
@@ -265,9 +270,13 @@ while True:
                 collision_sound = mixer.Sound('./sounds/explosion.wav')
                 collision_sound.play()
                 bullet.change_position(new_x = bullet.X, new_y = y_pix - 120)
-                bullet.change_state('stopped')  
+                bullet.change_state('stopped') 
+                move.add_score() 
                 enemy.change_position(random.randint(65, x_pix - 65), random.randint(50, 150))
-                
+                explosao.explodir()
+                all_sprite.draw(screen)
+                all_sprite.update()
+       
             if ep or bp:
                 player.change_position(x_pix)
                 for ind_enemy in enemies:
@@ -278,5 +287,20 @@ while True:
 
         for enemy in enemies:
             enemy.blit(enemy.X, enemy.Y)
+    
+        # texto score
+        font = pygame.font.SysFont('calibri', 24)
+        text = font.render(f'SCORE: {move.score}', True, 'blue', 'black')
+        textRect = text.get_rect()
+        textRect.center = (45, 12)
+        screen.blit(text, textRect)
 
+        # dificuldades
+        if move.score == 10:
+            if EZ:
+                for enemy in enemies:
+                    enemy.change_to_skin_hard()
+                    enemy.change_vel(1)
+                    EZ = False
+ 
     pygame.display.update()
